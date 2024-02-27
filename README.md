@@ -51,3 +51,6 @@ is the measured sky represented as a coherency matrix.
 We want to know the degree to which the set of $`{\bf J}_i`$'s can be altered without affecting the final measured sky.
 Although there are some degrees of freedom hat exist under certain conditions (an unpolarised sky, and a "well-behaved" beam model), here we will make the least number of assumptions possible.
 In this case, the only freedom is that, taken altogether, the set $`y_i`$ is equivalent up to multiplication by a unit phasor, $`e^{i\theta}`$, for arbitrary $`\theta`$.
+The r...
+
+This fact makes possible the "trick" of dividing the Jones matrix elements by a reference antenna in order to better evaluate the frequency structure of the solutions.
