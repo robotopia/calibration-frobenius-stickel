@@ -26,7 +26,7 @@ Each data point, "$`y`$", is therefore a *set* of complex-valued Jones matrices 
 where a "set" consists of one Jones matrix per antenna element.
 That is, for the $`f`$th frequency, we can write
 ```math
-y_f = \left\{{\bf J}_{f,a} \,\middle|\, a \text{ is an antenna index}\right\}
+y_f = \left\{{\bf J}_{f,i} \,\middle|\, i \text{ is an antenna index}\right\}
 ```
 Naturally, our model point, $`\hat{y}_f`$, will have the same form.
 
@@ -35,7 +35,15 @@ We must now define **goodness-of-fit** and **smoothness** cost functions.
 ## Goodness-of-fit
 
 The data, $`y_f`$, are themselves the result of an optimisation problem whose cost function includes information (sky model, visibilities) that we will assume are no longer available to us.
-Any goodness-of-fit cost function that is defined *without* that information is always at risk of producing a model solution, $`\hat{y}`$, that ultimately performs worse than the original solution.
+Any goodness-of-fit cost function that is defined *without* that information is always at risk of producing a model solution, $`\hat{y}_f`$, that ultimately performs worse than the original solution.
 It *may* perform better, but only if the "noise" component of the fits is due to some incorrect assumption (i.e. an inaccurate sky model or a badly modelled primary beam) which are otherwise expected to vary relatively smoothly over frequency.
 
-The Jones matrices are "coupled" in the sense that each pair of antennas (i.e. a "baseline") 
+The Jones matrices are "coupled" in the sense that each pair of antennas, i.e. a "baseline", form a sky measurement (for each frequency, so the $`f`$ subscript is suppressed here)
+```math
+{\bf E} = {\bf B}^{-1} {\bf J}_i^{-1} {\bf V} ({\bf J}_j^H)^{-1} ({\bf B}^H)^{-1},
+```
+where $`i`$ and $`j`$ are both antenna indices, $`\cdot^H`$ is the Hermitian operation, $`{\bf V}`$ is the masured visibility (a Hermitian matrix), $`{\bf B}`$ is the primary beam response, assumed here to be identical for all antennas, and 
+```math
+{\bf E} = \frac{1}{2} \begin{bmatrix} I + Q & U - Vi \\ U + Vi & I - Q \end{bmatrix}
+```
+is the measured sky represented as a coherency matrix.
