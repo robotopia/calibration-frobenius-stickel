@@ -68,3 +68,9 @@ The "best", or "global" goodness-of-fit is the minimum $`C_{\text{fit},\theta}`$
 ```math
 C_\text{fit} \equiv \min \left\{C_{\text{fit},\theta} \middle| \theta \in [0,2\pi)\right\}.
 ```
+
+Note that $`\theta`$ is *not* a free parameter to be fitted; the optimum value of $`\theta`$ must be found at each step of the numerical solution.
+
+## Smoothness
+
+Smoothness refers to how sets Jones matrices compare across nearby frequency bins.
