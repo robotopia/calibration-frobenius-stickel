@@ -16,11 +16,21 @@ where $`\lambda`$ is the so-called "regularisation parameter" that lets you deci
 For "simple" datasets (e.g. 1D functions), both cost functions can be defined in such a way that the problem of finding the model $`\hat{y}(x)`$ that minimises $`Q(\hat{y})`$ ls a linear problem and can be solved by standard least-squares techniques (e.g. see [Stickel, 2010](https://www.sciencedirect.com/science/article/pii/S0098135409002567)).
 However, like any optimisation problem, it can also be done numerically, which may be necessary for more complicated cost functions.
 
-## Cost functions
+## Calibration data sets
 
-In this case, the models we are trying to fit are for calibration solutions which are themselves the converged solutions to a previous numerical optimisation problem.
-Each data point, "$`y`$", is in fact a complex-valued Jones matrix,
+In this case, the data to which we are trying to fit smoothed models are calibration solutions, and the dimension we are smoothing over is frequency.
+Each data point, "$`y`$", is therefore a *set* of complex-valued Jones matrices of the form
 ```math
 J = \begin{bmatrix} j_{xx} & j_{xy} \\ j_{yx} & j_{yy} \end{bmatrix},
 ```
+where a "set" consists of one Jones matrix per antenna element.
+That is, for the $`i`$th frequency, we can write
+```math
+y_i = \left\{J_a \middle| a \text{ is an antenna index}\right\}
+```
+Naturally, our model point, $`\hat{y}`$, will have the same form.
+
+We must now define **goodness-of-fit** and **smoothness** cost functions.
+
+## Goodness-of-fit
 
