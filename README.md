@@ -23,4 +23,4 @@ Each data point, "$`y`$", is in fact a complex-valued Jones matrix,
 ```math
 J = \begin{bmatrix} j_{xx} & j_{xy} \\ j_{yx} & j_{yy} \end{bmatrix},
 ```
-whose
+
