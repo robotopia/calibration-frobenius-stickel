@@ -109,9 +109,9 @@ C_\text{fit} = \sum_i \lVert {\bf R}_{i,\theta_\text{min}} \rVert_F^2.
 ## Smoothness
 
 Smoothness refers to how sets of (model) Jones matrices change across adjacent frequency bins.
-A first order numerical difference between two consecutive frequency bins can be defined similarly to the objective function used above for the goodness-of-fit, but with the (forward finite) difference between consecutive bins,
+A first order numerical difference between two consecutive frequency bins can be defined similarly to the objective function used above for the goodness-of-fit, but with the (backward finite) difference between consecutive bins,
 ```math
-{\bf \Delta}_{f,i,\theta_f} \equiv \hat{\bf J}_{f+1,i} - e^{i\theta_f} \hat{\bf J}_{f,i},
+{\bf \Delta}_{f,i,\theta_f} \equiv \hat{\bf J}_{f,i} - e^{i\theta_f} \hat{\bf J}_{f-1,i},
 ```
 playing the same role that the residual, $`{\bf R}_{f,i,\theta}`$ did above.
 (Note that the frequency indices are no longer being suppressed.)
@@ -119,16 +119,20 @@ playing the same role that the residual, $`{\bf R}_{f,i,\theta}`$ did above.
 The optimal theta (between each pair of frequency bins) is calculated in an analogous way to the goodness-of-fit version above, i.e.
 ```math
 \theta_{\text{min},f}
-    = \arg \left[ \sum_{p,q,i} \hat{j}_{pq,f+1,i} \hat{j}_{pq,f,i}^\ast \right].
+    = \arg \left[ \sum_{p,q,i} \hat{j}_{pq,f,i} \hat{j}_{pq,f-1,i}^\ast \right].
 ```
-
-Higher-order finite differences proceed in the natural way.
-The second order central finite difference is
+Following the advice in [Stickel (2010)](https://www.sciencedirect.com/science/article/pii/S0098135409002567) that the chosen finite difference order should be two higher than the model derivative of interest, we choose here the third-order finite difference instead of just the first order difference.
+The second order (central) finite difference is
 ```math
 {\bf \Delta}_{f,i}^{(2)} = {\bf \Delta}_{f,i,\theta_{\text{min},f}} - {\bf \Delta}_{f-1,i,\theta_{\text{min},f-1}},
 ```
-and the third-order "semi-forward" finite difference is
+and the third-order ("semi-backward") finite difference is
 ```math
 {\bf \Delta}_{f,i}^{(3)} = {\bf \Delta}_{f,i,\theta_{\text{min},f}}^{(2)} - {\bf \Delta}_{f-1,i,\theta_{\text{min},f-1}}^{(2)}.
 ```
 
+
+The smoothness objective function can then be defined as
+```math
+C_\text{smooth} = \sum_{f,i} \lVert {\bf \Delta}_{f,i}^{(3)} \rVert_F^2.
+```
