@@ -138,5 +138,5 @@ If instead one wants to try the third order difference, one can use the followin
 
 The smoothness objective function can then be defined as
 ```math
-C_\text{smooth} = \sum_{f,i} \lVert {\bf \Delta}_{f,i}^{(3)} \rVert_F^2.
+C_\text{smooth} = \sum_{f,i} \lVert {\bf \Delta}_{f,i}^{(2)} \rVert_F^2.
 ```
