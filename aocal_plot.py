@@ -67,7 +67,7 @@ def nanaverage(a, axis=None, weights=None):
         weights = np.ones(a.shape)
     return np.nansum(a*weights, axis=axis)/np.nansum(weights, axis=axis)
 
-def plot(ao, plot_filename=None, refant=None, n_rows=8, plot_title="", amp_max=None, format="png", outdir=None, ants_per_line=8, marker=',', markersize=2, verbose=0, metafits=None):
+def plot(ao, plot_filename=None, refant=None, n_rows=8, plot_title="", amp_max=None, format="png", outdir=None, ants_per_line=8, marker=',', markersize=2, verbose=0, metafits=None, chan_idxs=None):
     """
     plot aocal
     """
@@ -76,6 +76,9 @@ def plot(ao, plot_filename=None, refant=None, n_rows=8, plot_title="", amp_max=N
         logging.basicConfig(level=logging.INFO)
     elif verbose > 1:
         logging.basicConfig(level=logging.DEBUG)
+
+    if chan_idxs is None:
+        chan_idxs = np.arange(ao.n_chan)
 
     n_cols = ao.n_ant//n_rows
     gs = gridspec.GridSpec(n_rows, n_cols)
@@ -151,9 +154,9 @@ def plot(ao, plot_filename=None, refant=None, n_rows=8, plot_title="", amp_max=N
                 angles= np.angle(ao[timestep, antenna, :, pol], deg=True)
 
                 # Phase plot
-                ax.plot(angles, color=POL_COLOR[polstr], zorder=POL_ZORDER[polstr], linestyle='None', marker=marker, markersize=markersize, label=polstr)
+                ax.plot(chan_idxs, angles, color=POL_COLOR[polstr], zorder=POL_ZORDER[polstr], linestyle='None', marker=marker, markersize=markersize, label=polstr)
                 # Amplitude plot
-                ax1.plot(amps, color=POL_COLOR[polstr], zorder=POL_ZORDER[polstr], linestyle='None', marker=marker, markersize=markersize, label=polstr)
+                ax1.plot(chan_idxs, amps, color=POL_COLOR[polstr], zorder=POL_ZORDER[polstr], linestyle='None', marker=marker, markersize=markersize, label=polstr)
 
                 #if np.all(np.isnan(amps)):
                     # all flagged
@@ -164,7 +167,7 @@ def plot(ao, plot_filename=None, refant=None, n_rows=8, plot_title="", amp_max=N
                     #rect.set_facecolor('black')
                     #rect.set_alpha('0.4')
             ax.set_autoscale_on(False)
-            ax.set_xlim([-1, ao.n_chan])
+            ax.set_xlim([-1, chan_idxs[-1] + 1])
             ax.set_ylim([-180,180])
             if horizontal_index == 0:
                 ax.set_yticks([-90,0,90])
@@ -180,7 +183,7 @@ def plot(ao, plot_filename=None, refant=None, n_rows=8, plot_title="", amp_max=N
                 ax.set_xticks([])
                 ax1.set_xticks([])
 
-            ax1.set_xlim([-1, ao.n_chan])
+            ax1.set_xlim([-1, chan_idxs[-1] + 1])
             ax1.set_ylim([0, amp_max])
             #ax1.set_autoscale_on(False)
 
