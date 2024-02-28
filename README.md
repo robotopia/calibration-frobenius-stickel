@@ -82,7 +82,27 @@ C_{\text{fit},\theta} = \sum_i \sum_{p\in\{X,Y\}} \sum_{q\in\{X,Y\}} |j_{pq,i} -
 ```
 Each individual term has an expansion
 ```math
-|j_{pq,i} - e^{i\theta} \hat{j}_{pq,i}|^2 = (j_{pq,i} - e^{i\theta} \hat{j}_{pq,i})(j_{pq,i}^\ast - e^{-i\theta} \hat{j}_{pq,i}^\ast) = |j_{pq,i}|^2 + |\hat{j}_{pq,i}|^2 - e^{i\theta} j_{pq,i}^\ast \hat{j}_{pq,i} - e^{-i\theta} j_{pq,i} \hat{j}_{pq,i}^\ast.
+|j_{pq,i} - e^{i\theta} \hat{j}_{pq,i}|^2
+    = (j_{pq,i} - e^{i\theta} \hat{j}_{pq,i})(j_{pq,i}^\ast - e^{-i\theta} \hat{j}_{pq,i}^\ast)
+    = |j_{pq,i}|^2 + |\hat{j}_{pq,i}|^2 - e^{i\theta} j_{pq,i}^\ast \hat{j}_{pq,i} - e^{-i\theta} j_{pq,i} \hat{j}_{pq,i}^\ast.
+```
+Therefore, minimising $`C_{\text{fit},\theta}`$ is equivalent to maximising
+```math
+\sum_{p,q,i} \left( e^{i\theta} j_{pq,i}^\ast \hat{j}_{pq,i} + e^{-i\theta} j_{pq,i} \hat{j}_{pq,i}^\ast \right)
+    = \sum_{p,q,i} 2 \Re \left[ e^{i\theta} j_{pq,i}^\ast \hat{j}_{pq,i} \right]
+    = 2 \Re \left[ e^{i\theta} \sum_{p,q,i} j_{pq,i}^\ast \hat{j}_{pq,i} \right],
+```
+since the sum of the real parts equals the real part of the sum, and since the common factor of $`e^{i\theta}`$ can be factored out.
+This will be maximised when the sum itself is already purely real, which occures when $`\theta`$ is set to
+```math
+\theta_\text{max}
+    = -\arg \left[ \sum_{p,q,i} j_{pq,i}^\ast \hat{j}_{pq,i} \right]
+    = \arg \left[ \sum_{p,q,i} j_{pq,i} \hat{j}_{pq,i}^\ast \right].
+```
+
+The objective function is then simply
+```math
+C_\text{fit} = \sum_i \lVert {\bf R}_{i,\theta_\text{max}} \rVert_F^2.
 ```
 
 ## Smoothness
