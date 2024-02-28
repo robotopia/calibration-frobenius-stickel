@@ -21,7 +21,7 @@ However, like any optimisation problem, it can also be done numerically, which m
 In this case, the data to which we are trying to fit smoothed models are calibration solutions, and the dimension we are smoothing over is frequency, represented hereafter by the subscript $`f`$.
 Each data point, "$`y`$", is therefore a *set* of complex-valued Jones matrices of the form
 ```math
-{\bf J} = \begin{bmatrix} j_{xx} & j_{xy} \\ j_{yx} & j_{yy} \end{bmatrix},
+{\bf J} = \begin{bmatrix} j_{XX} & j_{XY} \\ j_{YX} & j_{YY} \end{bmatrix},
 ```
 where a "set" consists of one Jones matrix per antenna element.
 That is, for the $`f`$th frequency, we can write
@@ -62,14 +62,28 @@ Suppose we define a residual Jones matrix that depends on a choice of $`\theta`$
 where care must be taken to distinguish the antenna index $`i`$ in the subscripts from the imaginary number $`i`$ in the exponent.
 We use the Frobenius norm to convert the residual Jones into a real-valued objective function that can be minimised:
 ```math
-C_{\text{fit},\theta} = \sum_i \lVert {\bf R}_{i,\theta} \rVert_F
+C_{\text{fit},\theta} = \sum_i \lVert {\bf R}_{i,\theta} \rVert_F^2
 ```
 The "best", or "global" goodness-of-fit is the minimum $`C_{\text{fit},\theta}`$ in the set:
 ```math
 C_\text{fit} \equiv \min \left\{C_{\text{fit},\theta} \middle| \theta \in [0,2\pi)\right\}.
 ```
 
-Note that $`\theta`$ is *not* a free parameter to be fitted; the optimum value of $`\theta`$ must be found at each step of the numerical solution.
+### Finding the optimal $`\theta`$
+
+$`\theta`$ is *not* a free parameter to be fitted; the optimal value of $`\theta`$ which minimises the cost functionmust be found at each step of the numerical solution.
+Fortunately, it can be solved for analytically, as shown below.
+
+First, note that the use of the Frobenius norm to construct the objective function treats each element of the Jones matrices on the same footing.
+That is, for the purposes of this smoothing exercise, the arrangement of the elements $`j_{XX}`$ into a $`2 \times 2`$ matrix is irrelevant; they could have equivalently been arranged in a single vector containing the elements from all antennas, for example.
+The theta-dependent objective function could therefore be equivalently expressed as
+```math
+C_{\text{fit},\theta} = \sum_i \sum_{p\in\{X,Y\}} \sum_{q\in\{X,Y\}} |j_{pq,i} - e^{i\theta} \hat{j}_{pq,i}|^2.
+```
+Each individual term has an expansion
+```math
+|j_{pq,i} - e^{i\theta} \hat{j}_{pq,i}|^2 = (j_{pq,i} - e^{i\theta} \hat{j}_{pq,i})(j_{pq,i}^\ast - e^{-i\theta} \hat{j}_{pq,i}^\ast) = |j_{pq,i}|^2 + |\hat{j}_{pq,i}|^2 - e^{i\theta} j_{pq,i}^\ast \hat{j}_{pq,i} - e^{-i\theta} j_{pq,i} \hat{j}_{pq,i}^\ast.
+```
 
 ## Smoothness
 
