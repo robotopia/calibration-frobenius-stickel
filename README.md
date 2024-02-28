@@ -121,16 +121,20 @@ The optimal theta (between each pair of frequency bins) is calculated in an anal
 \theta_{\text{min},f}
     = \arg \left[ \sum_{p,q,i} \hat{j}_{pq,f,i} \hat{j}_{pq,f-1,i}^\ast \right].
 ```
-Following the advice in [Stickel (2010)](https://www.sciencedirect.com/science/article/pii/S0098135409002567) that the chosen finite difference order should be two higher than the model derivative of interest, we choose here the third-order finite difference instead of just the first order difference.
+Following the advice in [Stickel (2010)](https://www.sciencedirect.com/science/article/pii/S0098135409002567) that the chosen finite difference order should be two higher than the model derivative of interest, we choose here the second-order finite difference instead of just the first order difference.
 The second order (central) finite difference is
 ```math
 {\bf \Delta}_{f,i}^{(2)} = {\bf \Delta}_{f,i,\theta_{\text{min},f}} - {\bf \Delta}_{f-1,i,\theta_{\text{min},f-1}},
 ```
-and the third-order ("semi-backward") finite difference is
+
+If instead one wants to try the third order difference, one can use the following "semi-backward" finite difference:
 ```math
 {\bf \Delta}_{f,i}^{(3)} = {\bf \Delta}_{f,i,\theta_{\text{min},f}}^{(2)} - {\bf \Delta}_{f-1,i,\theta_{\text{min},f-1}}^{(2)}.
 ```
 
+> [!NOTE]
+> The finite differences above do not include the usual division by the point spacing, $`h`$ (see [Finite differences @ Wikipedia](https://en.wikipedia.org/wiki/Finite_difference)).
+> If the points are equally spaced, this is like setting $`h = 1`$, but if there are gaps in the data, then these "differences" should include $`h`$ explicitly, so that they behave more like derivatives.
 
 The smoothness objective function can then be defined as
 ```math
