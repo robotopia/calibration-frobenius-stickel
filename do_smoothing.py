@@ -28,23 +28,21 @@ def optimal_rotation(ao1, ao2, axis=None):
     mean = np.nanmean(ao1 * np.conj(ao2), axis=axis)
     return np.angle(mean)
 
-def ao_min_diff(ao1, ao2, idx=None):
+def ao_min_diff(ao1, ao2, axis=None):
     '''
     Returns the minimum difference of two (sets of) calibration solutions.
     "Minimum" up to rotation of the solutions by a unit length phasor:
     ao1 - e^(iθ) * ao2
     '''
-    theta_min = optimal_rotation(ao1, ao2)
+    theta_min = optimal_rotation(ao1, ao2, axis=axis)
     diff = ao1 - rotate_phases(ao2, theta_rad)
-
-    if idx is not None:
-        diff /= np.diff(idx)
 
     return diff
 
-def ao_min_diff2(ao1, ao2, idx=None):
+def ao_min_diff_freq(ao1, idx=None):
 
-    diff1 = ao_min_diff(ao1, ao2, idx)
+    diff1 = ao_min_diff(ao1[:,:,:-1])
+    #UP TO HERE
     if idx is not None:
         diff1_idx += idx[:-1] + np.diff(idx)/2
 
