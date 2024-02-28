@@ -57,10 +57,10 @@ This fact is what makes possible the "trick" of dividing the Jones matrix elemen
 Rather than relying on the use of an arbitrary reference antenna, we would like a goodness-of-fit that can "absorb" this factor in its very definition.
 Suppose we define a residual Jones matrix that depends on a choice of $`\theta`$ (still suppressing the subscript $`f`$ for now):
 ```math
-{\bf R}_{i,\theta} \equiv y_i - \hat{y}_i = \left\{{\bf J}_i - e^{i\theta} \hat{\bf J}_i \middle| i \text{ is an antenna index}\right\},
+{\bf R}_{i,\theta} \equiv {\bf J}_i - e^{i\theta} \hat{\bf J}_i,
 ```
 where care must be taken to distinguish the antenna index $`i`$ in the subscripts from the imaginary number $`i`$ in the exponent.
-We use the Frobenius norm to convert the residual Jones into a real-valued objective function that can be minimised:
+We use the Frobenius norm ($`\lVert \cdot \rVert_F`$) to convert the residual Jones into a real-valued objective function that can be minimised:
 ```math
 C_{\text{fit},\theta} = \sum_i \lVert {\bf R}_{i,\theta} \rVert_F^2
 ```
@@ -95,16 +95,23 @@ Therefore, minimising $`C_{\text{fit},\theta}`$ is equivalent to maximising
 since the sum of the real parts equals the real part of the sum, and since the common factor of $`e^{i\theta}`$ can be factored out.
 This will be maximised when the sum itself is already purely real, which occures when $`\theta`$ is set to
 ```math
-\theta_\text{max}
+\theta_\text{min}
     = -\arg \left[ \sum_{p,q,i} j_{pq,i}^\ast \hat{j}_{pq,i} \right]
     = \arg \left[ \sum_{p,q,i} j_{pq,i} \hat{j}_{pq,i}^\ast \right].
 ```
+(The subscript "min" is used to signify that it is the objective function that is being minimised.)
 
 The objective function is then simply
 ```math
-C_\text{fit} = \sum_i \lVert {\bf R}_{i,\theta_\text{max}} \rVert_F^2.
+C_\text{fit} = \sum_i \lVert {\bf R}_{i,\theta_\text{min}} \rVert_F^2.
 ```
 
 ## Smoothness
 
-Smoothness refers to how sets Jones matrices compare across nearby frequency bins.
+Smoothness refers to how sets of (model) Jones matrices change across adjacent frequency bins.
+A first order numerical difference between two consecutive frequency bins can be defined similarly to the objective function used above for the goodness-of-fit, but with the difference between consecutive bins,
+```math
+{\bf \Delta}_{f,i,\theta} \equiv \left\{ {\bf J}_{f+1,i} - e^{i\theta} \hat{\bf J}_{f,i}
+```
+playing the same role that the residual, $`{\bf R}_{f,i,\theta}`$ did above.
+(Note that the frequency indices are no longer being suppressed.)

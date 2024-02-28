@@ -39,11 +39,11 @@ def test_optimal_rotation(ao):
     aocal_plot.plot(ao, plot_filename="rand", n_rows=6, ants_per_line=6)
 
     # Optimise across frequency
-    theta_max = np.array([optimal_rotation(ao[:,:,0,:], ao[:,:,i,:]) for i in range(ao.n_chan)])
-    #print(np.abs(theta + theta_max))
+    theta_min = np.array([optimal_rotation(ao[:,:,0,:], ao[:,:,i,:]) for i in range(ao.n_chan)])
+    #print(np.abs(theta + theta_min))
 
     # Rotate using the found optimal thetas
-    rotate_phases(ao, theta_max)
+    rotate_phases(ao, theta_min)
     aocal_plot.plot(ao, plot_filename="test", n_rows=6, ants_per_line=6)
 
 def main():
