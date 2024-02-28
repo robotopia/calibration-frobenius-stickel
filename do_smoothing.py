@@ -25,7 +25,7 @@ def rotate_phases(ao, theta_rad, chan=None):
         return
 
 def optimal_rotation(ao1, ao2):
-    return np.angle(np.sum(ao1 * np.conj(ao2)))
+    return np.angle(np.nansum(ao1 * np.conj(ao2)))
 
 def test_optimal_rotation(ao):
 
@@ -39,12 +39,20 @@ def test_optimal_rotation(ao):
     aocal_plot.plot(ao, plot_filename="rand", n_rows=6, ants_per_line=6)
 
     # Optimise across frequency
-    theta_min = np.array([optimal_rotation(ao[:,:,0,:], ao[:,:,i,:]) for i in range(ao.n_chan)])
-    #print(np.abs(theta + theta_min))
+    delta_theta_min = -np.array([0.0] + [optimal_rotation(ao[:,:,i,:], ao[:,:,i-1,:]) for i in range(1, ao.n_chan)])
+    theta_min = np.nancumsum(delta_theta_min)
+    #print(np.abs(theta))
+    #print(np.abs(theta_min))
 
     # Rotate using the found optimal thetas
     rotate_phases(ao, theta_min)
     aocal_plot.plot(ao, plot_filename="test", n_rows=6, ants_per_line=6)
+
+def objective(ao, ao_hat):
+    '''
+    ao is the original data set, where 
+    '''
+    pass
 
 def main():
     # Argument parser

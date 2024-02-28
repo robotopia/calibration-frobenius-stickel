@@ -9,7 +9,7 @@
 
 Regularisation by smoothing operates by weighting a "goodness-of-fit" cost function against a model "smoothness" cost function,
 ```math
-C(\hat{y}) = C_\text{fit}(y, \hat{y}) + \lambda C_\text{smooth}(\hat{y}),
+C(y, \hat{y}) = C_\text{fit}(y, \hat{y}) + \lambda C_\text{smooth}(\hat{y}),
 ```
 where $`\lambda`$ is the so-called "regularisation parameter" that lets you decide whether the goodness-of-fit is more or less important relative to model smoothness, $`y`$ is the data, and $`\hat{y}`$ is the smoothed model we are trying to find.
 
