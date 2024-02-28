@@ -4,7 +4,8 @@ from optparse import OptionParser #NB zeus does not have argparse!
 
 import numpy as np
 import matplotlib
-matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+#matplotlib.use('Agg')
 import matplotlib.gridspec as gridspec
 import pylab
 from astropy.io import fits
@@ -66,7 +67,7 @@ def nanaverage(a, axis=None, weights=None):
         weights = np.ones(a.shape)
     return np.nansum(a*weights, axis=axis)/np.nansum(weights, axis=axis)
 
-def plot(ao, plot_filename, refant=None, n_rows=8, plot_title="", amp_max=None, format="png", outdir=None, ants_per_line=8, marker=',', markersize=2, verbose=0, metafits=None):
+def plot(ao, plot_filename=None, refant=None, n_rows=8, plot_title="", amp_max=None, format="png", outdir=None, ants_per_line=8, marker=',', markersize=2, verbose=0, metafits=None):
     """
     plot aocal
     """
@@ -121,8 +122,8 @@ def plot(ao, plot_filename, refant=None, n_rows=8, plot_title="", amp_max=None, 
 
     for timestep in range(ao.n_int):
 
-        phsfig = pylab.figure(figsize=(24.0, 13.5))
-        ampfig = pylab.figure(figsize=(24.0, 13.5))
+        phsfig = plt.figure(figsize=(24.0, 13.5))
+        ampfig = plt.figure(figsize=(24.0, 13.5))
         logging.debug("vertical_index, horizontal_index")
         for a, antenna in enumerate(ant_iter):
             vertical_index = a // n_cols
@@ -135,11 +136,11 @@ def plot(ao, plot_filename, refant=None, n_rows=8, plot_title="", amp_max=None, 
             # Amplitude plot
             ax1 = ampfig.add_subplot(gs[vertical_index, horizontal_index])
 
-            ax.text(0.05, 0.05, antenna,
+            ax.text(0.05, 0.05, f'Ant #{antenna}',
                     horizontalalignment='left',
                     verticalalignment='bottom',
                     transform=ax.transAxes)
-            ax1.text(0.05, 0.05, antenna,
+            ax1.text(0.05, 0.05, f'Ant #{antenna}',
                      horizontalalignment='left',
                      verticalalignment='bottom',
                      transform=ax1.transAxes)
@@ -150,9 +151,9 @@ def plot(ao, plot_filename, refant=None, n_rows=8, plot_title="", amp_max=None, 
                 angles= np.angle(ao[timestep, antenna, :, pol], deg=True)
 
                 # Phase plot
-                ax.plot(angles, color=POL_COLOR[polstr], zorder=POL_ZORDER[polstr], linestyle='None', marker=marker, markersize=markersize)
+                ax.plot(angles, color=POL_COLOR[polstr], zorder=POL_ZORDER[polstr], linestyle='None', marker=marker, markersize=markersize, label=polstr)
                 # Amplitude plot
-                ax1.plot(amps, color=POL_COLOR[polstr], zorder=POL_ZORDER[polstr], linestyle='None', marker=marker, markersize=markersize)
+                ax1.plot(amps, color=POL_COLOR[polstr], zorder=POL_ZORDER[polstr], linestyle='None', marker=marker, markersize=markersize, label=polstr)
 
                 #if np.all(np.isnan(amps)):
                     # all flagged
@@ -163,28 +164,43 @@ def plot(ao, plot_filename, refant=None, n_rows=8, plot_title="", amp_max=None, 
                     #rect.set_facecolor('black')
                     #rect.set_alpha('0.4')
             ax.set_autoscale_on(False)
-            ax.set_xticks([])
-            ax.set_yticks([])
             ax.set_xlim([-1, ao.n_chan])
             ax.set_ylim([-180,180])
+            if horizontal_index == 0:
+                ax.set_yticks([-90,0,90])
+                ax.set_ylabel("Phase (deg)")
+                ax1.set_ylabel("Amplitude")
+            else:
+                ax.set_yticks([])
+                ax1.set_yticks([])
+            if vertical_index == n_rows - 1:
+                ax.set_xlabel("Frequency")
+                ax1.set_xlabel("Frequency")
+            else:
+                ax.set_xticks([])
+                ax1.set_xticks([])
 
-            ax1.set_xticks([])
-            ax1.set_yticks([])
             ax1.set_xlim([-1, ao.n_chan])
             ax1.set_ylim([0, amp_max])
             #ax1.set_autoscale_on(False)
 
         phsfig.suptitle(plot_title,fontsize=16)
+        ampfig.suptitle(plot_title, fontsize=16)
 
-        ampfig.suptitle(plot_title + "(amp range 0 - %.1f)" % amp_max, fontsize=16)
-        if outdir is not None:
-            plot_filename = os.path.join(outdir, os.path.basename(plot_filename))
-        if ao.n_int > 1:
-            int_str = "_t%04d" % timestep
+        if plot_filename is None:
+            ampfig.show()
+            phsfig.show()
         else:
-            int_str = ""
-        ampfig.savefig("%s%s_amp.%s" % (plot_filename, int_str, format))
-        phsfig.savefig("%s%s_phase.%s" % (plot_filename, int_str, format))
+            if outdir is not None:
+                plot_filename = os.path.join(outdir, os.path.basename(plot_filename))
+            if ao.n_int > 1:
+                int_str = "_t%04d" % timestep
+            else:
+                int_str = ""
+            ampfig.tight_layout()
+            phsfig.tight_layout()
+            ampfig.savefig("%s%s_amp.%s" % (plot_filename, int_str, format))
+            phsfig.savefig("%s%s_phase.%s" % (plot_filename, int_str, format))
 
 if __name__ == '__main__':
     parser = OptionParser(usage = "usage: %prog binfile" +
