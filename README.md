@@ -151,3 +151,17 @@ The smoothness objective function can then be defined as
 ```math
 C_\text{smooth} = \sum_{f,i} \lVert {\bf \Delta}_{f,i}^{(2)} \rVert_F^2.
 ```
+
+## Jones matrices with particular forms
+
+In some cases, the expected Jones matrices might be expected to have a particular form such as
+```math
+{\bf J} = \begin{bmatrix} j_{XX} & j_{XX}\sin\alpha \\ -j_{YY} \sin\alpha & j_{YY} \end{bmatrix}.
+```
+In this example, the Jones matrices only have 5 degrees of freedom (two each for the complex $`j_{XX}`$ and $`j_{YY}`$ terms, and one for $`\alpha`$), instead of the 8 for a completely unconstrained Jones matrix.
+
+In this case, it might be preferable to define two $`C_\text{smooth}`$ objective functions, one for $`j_{XX}`$ and $`j_{YY}`$, and one for $`\alpha`$.
+The former can follow the same scheme as above, by constructing a "norm" ...
+
+> [!WARNING]
+> Under construction!
