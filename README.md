@@ -1,9 +1,20 @@
 # Attempt to do smoothing of calibration solutions that retains solution integrity
 
+Contents of this `README`:
+- [Folder contents](#folder-contents)
+- [Regularisation](#regularisation)
+- [Calibration data sets](#calibration-data-sets)
+- [Goodness-of-fit](#goodness-of-fit)
+  - [Finding the optimal $`\theta`$](#finding-the-optimal-theta)
+- [Smoothness](#smoothness)
+
 ## Folder contents
 
 - `aocal.py` and `aocal_plot.py`: Stolen from [https://github.com/johnsmorgan/aocalpy](https://github.com/johnsmorgan/aocalpy) (git commit 7cc2d0e)
 - `SB38969.B1934-638.beam0.aocalibrate.bin`: A test data set
+- `do_smoothing.py`: The "main" script for doing the smoothing via regularisation
+- `JONES_EQUIVALENCE_CLASSES.md`: A discussion about which sets of instrumental Jones matrices can be considered equivalent, under certain conditions.
+- `README.md`: This README.
 
 ## Regularisation
 
