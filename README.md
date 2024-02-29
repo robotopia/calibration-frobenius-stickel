@@ -183,7 +183,7 @@ C_{\text{smooth},g} = \sum_{f,i} \lVert {\bf \Delta}_{f,i}^{(2)} \rVert_F^2,
 $`\alpha`$, however, may be expected to change more or less smoothly over frequency than the $`g_{XX}`$ and $`g_{YY}`$ terms.
 As a real quantity, we can define its cost function in the "ordinary" (second-order finite difference) way:
 ```math
-C_{\text{smooth},\alpha} = \sum_{f,i} (\alpha_{f-1,i} - 2\alpha_{f,i} + 2\alpha_{f+1,i})^2
+C_{\text{smooth},\alpha} = \sum_{f,i} (\alpha_{f-1,i} - 2\alpha_{f,i} + \alpha_{f+1,i})^2
 ```
 
 Now the total cost function is made up of three terms:
