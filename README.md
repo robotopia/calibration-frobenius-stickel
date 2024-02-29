@@ -32,12 +32,12 @@ However, like any optimisation problem, it can also be done numerically, which m
 In this case, the data to which we are trying to fit smoothed models are calibration solutions, and the dimension we are smoothing over is frequency, represented hereafter by the subscript $`f`$.
 Each data point, "$`y`$", is therefore a *set* of complex-valued Jones matrices of the form
 ```math
-{\bf J} = \begin{bmatrix} j_{XX} & j_{XY} \\ j_{YX} & j_{YY} \end{bmatrix},
+{\bf G} = \begin{bmatrix} j_{XX} & j_{XY} \\ j_{YX} & j_{YY} \end{bmatrix},
 ```
 where a "set" consists of one Jones matrix per antenna element.
 That is, for the $`f`$th frequency, we can write
 ```math
-y_f = \left\{{\bf J}_{f,i} \,\middle|\, i \text{ is an antenna index}\right\}
+y_f = \left\{{\bf G}_{f,i} \,\middle|\, i \text{ is an antenna index}\right\}
 ```
 Naturally, our model point, $`\hat{y}_f`$, will have the same form.
 
@@ -51,7 +51,7 @@ It *may* perform better, but only if the "noise" component of the fits is due to
 
 The Jones matrices are "coupled" in the sense that each pair of antennas, i.e. a "baseline", form a sky measurement (for each frequency, so the $`f`$ subscript is suppressed here)
 ```math
-{\bf E} = {\bf B}^{-1} {\bf J}_i^{-1} {\bf V} ({\bf J}_j^H)^{-1} ({\bf B}^H)^{-1},
+{\bf E} = {\bf B}^{-1} {\bf G}_i^{-1} {\bf V} ({\bf G}_j^H)^{-1} ({\bf B}^H)^{-1},
 ```
 where $`i`$ and $`j`$ are both antenna indices, $`\cdot^H`$ is the Hermitian operation, $`{\bf V}`$ is the masured visibility (a Hermitian matrix), $`{\bf B}`$ is the primary beam response, assumed here to be identical for all antennas, and 
 ```math
@@ -59,16 +59,16 @@ where $`i`$ and $`j`$ are both antenna indices, $`\cdot^H`$ is the Hermitian ope
 ```
 is the measured sky represented as a coherency matrix.
 
-We want to know the degree to which the set of $`{\bf J}_i`$'s can be altered without affecting the final measured sky.
+We want to know the degree to which the set of $`{\bf G}_i`$'s can be altered without affecting the final measured sky.
 Although there are some degrees of freedom hat exist under certain conditions (an unpolarised sky, and a "well-behaved" beam model), here we will make the least number of assumptions possible.
 In this case, the only freedom is that, taken altogether, the set $`y_i`$ is equivalent up to multiplication by a unit phasor, $`e^{i\theta}`$, for arbitrary $`\theta`$.
-The reason is that any scalar factor $`e^{i\theta}`$ that enters $`{\bf E}`$ via its presence in $`{\bf J}_i`$ cancels with its conjugate, $`e^{-i\theta}`$ present in $`{\bf J}_j^H`$.
+The reason is that any scalar factor $`e^{i\theta}`$ that enters $`{\bf E}`$ via its presence in $`{\bf G}_i`$ cancels with its conjugate, $`e^{-i\theta}`$ present in $`{\bf G}_j^H`$.
 This fact is what makes possible the "trick" of dividing the Jones matrix elements by a reference antenna in order to better evaluate the frequency structure of the solutions.
 
 Rather than relying on the use of an arbitrary reference antenna, we would like a goodness-of-fit that can "absorb" this factor in its very definition.
 Suppose we define a residual Jones matrix that depends on a choice of $`\theta`$ (still suppressing the subscript $`f`$ for now):
 ```math
-{\bf R}_{i,\theta} \equiv {\bf J}_i - e^{i\theta} \hat{\bf J}_i,
+{\bf R}_{i,\theta} \equiv {\bf G}_i - e^{i\theta} \hat{\bf G}_i,
 ```
 where care must be taken to distinguish the antenna index $`i`$ in the subscripts from the imaginary number $`i`$ in the exponent.
 We use the Frobenius norm ($`\lVert \cdot \rVert_F`$) to convert the residual Jones into a real-valued objective function that can be minimised:
@@ -122,7 +122,7 @@ C_\text{fit} = \sum_i \lVert {\bf R}_{i,\theta_\text{min}} \rVert_F^2.
 Smoothness refers to how sets of (model) Jones matrices change across adjacent frequency bins.
 A first order numerical difference between two consecutive frequency bins can be defined similarly to the objective function used above for the goodness-of-fit, but with the (backward finite) difference between consecutive bins,
 ```math
-{\bf \Delta}_{f,i,\theta_f} \equiv \hat{\bf J}_{f,i} - e^{i\theta_f} \hat{\bf J}_{f-1,i},
+{\bf \Delta}_{f,i,\theta_f} \equiv \hat{\bf G}_{f,i} - e^{i\theta_f} \hat{\bf G}_{f-1,i},
 ```
 playing the same role that the residual, $`{\bf R}_{f,i,\theta}`$ did above.
 (Note that the frequency indices are no longer being suppressed.)
@@ -156,7 +156,7 @@ C_\text{smooth} = \sum_{f,i} \lVert {\bf \Delta}_{f,i}^{(2)} \rVert_F^2.
 
 In some cases, the expected Jones matrices might be expected to have a particular form such as
 ```math
-{\bf J} = \begin{bmatrix} j_{XX} & j_{XX}\sin\alpha \\ -j_{YY} \sin\alpha & j_{YY} \end{bmatrix}.
+{\bf G} = \begin{bmatrix} j_{XX} & j_{XX}\sin\alpha \\ -j_{YY} \sin\alpha & j_{YY} \end{bmatrix}.
 ```
 In this example, the Jones matrices only have 5 degrees of freedom (two each for the complex $`j_{XX}`$ and $`j_{YY}`$ terms, and one for $`\alpha`$), instead of the 8 for a completely unconstrained Jones matrix.
 
