@@ -150,8 +150,30 @@ def main():
     # Open cal file and load the data
     ao = aocal.fromfile(args.solution_file)
 
-    #test_optimal_rotation(ao)
-    print(test_objective(ao, args.lmbda))
+    # Run "test_optimal_rotation" to output orig_*.png, rand_*.png, and test_*.png plots,
+    # showing that the method for "lining up the phases without using a reference antenna"
+    # actually works!
+
+    #test_optimal_rotation(ao)  
+
+    # Run "test_objective" to output some example cost function values for different lmbda
+    # values chosen on the command line. Note that this little test uses a bit of
+    # randomisation, so you won't get exactly the same value every time for the same lmbda
+    #value
+
+    #print(test_objective(ao, args.lmbda))
+
+    # YET TO DO: actually put the objective function into scipy's minimize() (or other
+    # numerical solver of your choice).
+
+    # ...
+
+    # YET TO DO: Once it's been solved, choose how to display the results.
+    # Note that the fitted model, like the original data, will not necessarily be "lined up
+    # in phase" (e.g. as determined by optimal_rotation()), so if you want to plot it like that,
+    # you'll have to do that step again yourself. See test_optimal_rotation() as an example.
+
+    # ...
 
 
 if __name__ == '__main__':
