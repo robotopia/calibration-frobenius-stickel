@@ -32,7 +32,7 @@ However, like any optimisation problem, it can also be done numerically, which m
 In this case, the data to which we are trying to fit smoothed models are calibration solutions, and the dimension we are smoothing over is frequency, represented hereafter by the subscript $`f`$.
 Each data point, "$`y`$", is therefore a *set* of complex-valued Jones matrices of the form
 ```math
-{\bf G} = \begin{bmatrix} j_{XX} & j_{XY} \\ j_{YX} & j_{YY} \end{bmatrix},
+{\bf G} = \begin{bmatrix} g_{XX} & g_{XY} \\ g_{YX} & g_{YY} \end{bmatrix},
 ```
 where a "set" consists of one Jones matrix per antenna element.
 That is, for the $`f`$th frequency, we can write
@@ -86,29 +86,29 @@ $`\theta`$ is *not* a free parameter to be fitted; the optimal value of $`\theta
 Fortunately, it can be solved for analytically, as shown below.
 
 First, note that the use of the Frobenius norm to construct the objective function treats each element of the Jones matrices on the same footing.
-That is, for the purposes of this smoothing exercise, the arrangement of the elements $`j_{XX}`$ into a $`2 \times 2`$ matrix is irrelevant; they could have equivalently been arranged in a single vector containing the elements from all antennas, for example.
+That is, for the purposes of this smoothing exercise, the arrangement of the elements $`g_{XX}`$ into a $`2 \times 2`$ matrix is irrelevant; they could have equivalently been arranged in a single vector containing the elements from all antennas, for example.
 The theta-dependent objective function could therefore be equivalently expressed as
 ```math
-C_{\text{fit},\theta} = \sum_i \sum_{p\in\{X,Y\}} \sum_{q\in\{X,Y\}} |j_{pq,i} - e^{i\theta} \hat{j}_{pq,i}|^2.
+C_{\text{fit},\theta} = \sum_i \sum_{p\in\{X,Y\}} \sum_{q\in\{X,Y\}} |g_{pq,i} - e^{i\theta} \hat{g}_{pq,i}|^2.
 ```
 Each individual term has an expansion
 ```math
-|j_{pq,i} - e^{i\theta} \hat{j}_{pq,i}|^2
-    = (j_{pq,i} - e^{i\theta} \hat{j}_{pq,i})(j_{pq,i}^\ast - e^{-i\theta} \hat{j}_{pq,i}^\ast)
-    = |j_{pq,i}|^2 + |\hat{j}_{pq,i}|^2 - e^{i\theta} j_{pq,i}^\ast \hat{j}_{pq,i} - e^{-i\theta} j_{pq,i} \hat{j}_{pq,i}^\ast.
+|g_{pq,i} - e^{i\theta} \hat{g}_{pq,i}|^2
+    = (g_{pq,i} - e^{i\theta} \hat{g}_{pq,i})(g_{pq,i}^\ast - e^{-i\theta} \hat{g}_{pq,i}^\ast)
+    = |g_{pq,i}|^2 + |\hat{g}_{pq,i}|^2 - e^{i\theta} g_{pq,i}^\ast \hat{g}_{pq,i} - e^{-i\theta} g_{pq,i} \hat{g}_{pq,i}^\ast.
 ```
 Therefore, minimising $`C_{\text{fit},\theta}`$ is equivalent to maximising
 ```math
-\sum_{p,q,i} \left( e^{i\theta} j_{pq,i}^\ast \hat{j}_{pq,i} + e^{-i\theta} j_{pq,i} \hat{j}_{pq,i}^\ast \right)
-    = \sum_{p,q,i} 2 \Re \left[ e^{i\theta} j_{pq,i}^\ast \hat{j}_{pq,i} \right]
-    = 2 \Re \left[ e^{i\theta} \sum_{p,q,i} j_{pq,i}^\ast \hat{j}_{pq,i} \right],
+\sum_{p,q,i} \left( e^{i\theta} g_{pq,i}^\ast \hat{g}_{pq,i} + e^{-i\theta} g_{pq,i} \hat{g}_{pq,i}^\ast \right)
+    = \sum_{p,q,i} 2 \Re \left[ e^{i\theta} g_{pq,i}^\ast \hat{g}_{pq,i} \right]
+    = 2 \Re \left[ e^{i\theta} \sum_{p,q,i} g_{pq,i}^\ast \hat{g}_{pq,i} \right],
 ```
 since the sum of the real parts equals the real part of the sum, and since the common factor of $`e^{i\theta}`$ can be factored out.
 This will be maximised when the sum itself is already purely real, which occures when $`\theta`$ is set to
 ```math
 \theta_\text{min}
-    = -\arg \left[ \sum_{p,q,i} j_{pq,i}^\ast \hat{j}_{pq,i} \right]
-    = \arg \left[ \sum_{p,q,i} j_{pq,i} \hat{j}_{pq,i}^\ast \right].
+    = -\arg \left[ \sum_{p,q,i} g_{pq,i}^\ast \hat{g}_{pq,i} \right]
+    = \arg \left[ \sum_{p,q,i} g_{pq,i} \hat{g}_{pq,i}^\ast \right].
 ```
 (The subscript "min" is used to signify that it is the objective function that is being minimised.)
 
@@ -130,7 +130,7 @@ playing the same role that the residual, $`{\bf R}_{f,i,\theta}`$ did above.
 The optimal theta (between each pair of frequency bins) is calculated in an analogous way to the goodness-of-fit version above, i.e.
 ```math
 \theta_{\text{min},f}
-    = \arg \left[ \sum_{p,q,i} \hat{j}_{pq,f,i} \hat{j}_{pq,f-1,i}^\ast \right].
+    = \arg \left[ \sum_{p,q,i} \hat{g}_{pq,f,i} \hat{g}_{pq,f-1,i}^\ast \right].
 ```
 Following the advice in [Stickel (2010)](https://www.sciencedirect.com/science/article/pii/S0098135409002567) that the chosen finite difference order should be two higher than the model derivative of interest, we choose here the second-order finite difference instead of just the first order difference.
 The second order (central) finite difference is
@@ -156,11 +156,11 @@ C_\text{smooth} = \sum_{f,i} \lVert {\bf \Delta}_{f,i}^{(2)} \rVert_F^2.
 
 In some cases, the expected Jones matrices might be expected to have a particular form such as
 ```math
-{\bf G} = \begin{bmatrix} j_{XX} & j_{XX}\sin\alpha \\ -j_{YY} \sin\alpha & j_{YY} \end{bmatrix}.
+{\bf G} = \begin{bmatrix} g_{XX} & g_{XX}\sin\alpha \\ -g_{YY} \sin\alpha & g_{YY} \end{bmatrix}.
 ```
-In this example, the Jones matrices only have 5 degrees of freedom (two each for the complex $`j_{XX}`$ and $`j_{YY}`$ terms, and one for $`\alpha`$), instead of the 8 for a completely unconstrained Jones matrix.
+In this example, the Jones matrices only have 5 degrees of freedom (two each for the complex $`g_{XX}`$ and $`g_{YY}`$ terms, and one for $`\alpha`$), instead of the 8 for a completely unconstrained Jones matrix.
 
-In this case, it might be preferable to define two $`C_\text{smooth}`$ objective functions, one for $`j_{XX}`$ and $`j_{YY}`$, and one for $`\alpha`$.
+In this case, it might be preferable to define two $`C_\text{smooth}`$ objective functions, one for $`g_{XX}`$ and $`g_{YY}`$, and one for $`\alpha`$.
 The former can follow the same scheme as above, by constructing a "norm" ...
 
 > [!WARNING]
