@@ -50,7 +50,7 @@ In that case, we have
 ```
 
 Are there other, equivalent Jones matrices that are somehow "equivalent" to applying this extra rotation?
-That is, is there some other Jones matrix, $`\tilde{\bf J} \ne {\bf J}`$ for which
+That is, is there some other Jones matrix, $`\tilde{\bf J}_i`$, for which
 ```math
 {\bf M} {\bf B}^{-1} {\bf J}_i^{-1} {\bf V_{ij}} ({\bf J}_j^H)^{-1} ({\bf B}^H)^{-1} {\bf M}^H
   = {\bf B}^{-1} \tilde{\bf J}_i^{-1} {\bf V_{ij}} (\tilde{\bf J}_j^H)^{-1} ({\bf B}^H)^{-1}
@@ -62,7 +62,7 @@ One only has to make sure that
 {\bf M} {\bf B}^{-1} {\bf J}_i^{-1} = {\bf B}^{-1} \tilde{\bf J}_i^{-1}
 ```
 for all $`i`$.
-We just solve for $`\tilde{\bf J}`$:
+We just solve for $`\tilde{\bf J}_i`$:
 ```math
 \tilde{\bf J}_i = {\bf J}_i {\bf B} {\bf M}^{-1} {\bf B}^{-1}.
 ```
