@@ -53,7 +53,7 @@ def ao_min_diff2_freq(ao1, freqs=None):
         freqs = np.arange(ao1.n_chan)
 
     # Pad the frequency axis by zeros on either side
-    zero_slice = np.full((ao1.n_int, ao1.n_nant, 1, ao1.n_pol), 0.0 + 0.0j)
+    zero_slice = np.full((ao1.n_int, ao1.n_ant, 1, ao1.n_pol), 0.0 + 0.0j)
     padded_ao1 = np.concatenate((zero_slice, ao1, zero_slice), axis=2)
 
     # Do something similar with the frequencies
@@ -62,11 +62,14 @@ def ao_min_diff2_freq(ao1, freqs=None):
     padded_freqs = np.concatenate(([freqs[0] - df_start], freqs, [freqs[-1] + df_end]))
 
     # First order differences
-    diff_12 = ao_min_diff(padded_ao1[:,:,1:-1,:], ao1[:,:,:-2,:], axis=(0, 1, 3)) / (freqs[1:-1] - freqs[:-2])
-    diff_23 = ao_min_diff(padded_ao1[:,:,2:,:], ao1[:,:,1:-1,:], axis=(0, 1, 3)) / (freqs[2:] - freqs[1:-1])
+    dfreq_12 = padded_freqs[np.newaxis, np.newaxis, 1:-1, np.newaxis] - padded_freqs[np.newaxis, np.newaxis, :-2, np.newaxis]  # f_n - f_{n-1}
+    dfreq_23 = padded_freqs[np.newaxis, np.newaxis, 2:, np.newaxis] - padded_freqs[np.newaxis, np.newaxis, 1:-1, np.newaxis]  # f_{n+1} - f_n
+    diff_12 = ao_min_diff(padded_ao1[:,:,1:-1,:], padded_ao1[:,:,:-2,:], axis=(0, 1, 3)) / dfreq_12
+    diff_23 = ao_min_diff(padded_ao1[:,:,2:,:], padded_ao1[:,:,1:-1,:], axis=(0, 1, 3)) / dfreq_23
 
     # Second order difference
-    diff2_123 = (diff_23 - diff_12) / (0.5 * (freqs[2:] - freqs[:-2]))
+    dfreq_13 = padded_freqs[np.newaxis, np.newaxis, 2:, np.newaxis] - padded_freqs[np.newaxis, np.newaxis, :-2, np.newaxis]
+    diff2_123 = (diff_23 - diff_12) / (0.5 * dfreq_13)
 
     return diff2_123
 
@@ -98,11 +101,14 @@ def test_optimal_rotation(ao):
     aocal_plot.plot(ao, plot_filename="test", n_rows=6, ants_per_line=6, chan_idxs=chans)
 
 
-def objective(ao, ao_hat, lmbda):
+def objective(ao, ao_hat, lmbda, freqs):
     '''
     ao is the original data set
     ao_hat is the model
     lmbda is the regularisation parameter
+
+    IMPORTANT: It is assumed that any channels which contain only nans have
+    already been removed
     '''
     # Calculate the residuals
     R = ao_min_diff(ao, ao_hat, axis=(0, 1, 3)) # "axis" controls how theta_min is calculated
@@ -110,9 +116,23 @@ def objective(ao, ao_hat, lmbda):
     # The "goodness-of-fit" cost function:
     C_fit = np.nanmean(np.abs(R)**2)  # Is actually (the square of) the Frobenius norm
 
+    # The second derivative
+    Diff2 = ao_min_diff2_freq(ao_hat, freqs=freqs)
+
     # The smoothness cost function
-    #C_smooth = ao_min_diff2_freq(ao_hat, freqs=None)
-    # UP TO HERE
+    C_smooth = np.nanmean(np.abs(Diff2)**2)
+
+    # The final, regularised cost function
+    return C_fit + lmbda*C_smooth
+
+
+def test_objective(ao, lmbda):
+
+    # Make a "model" which is just a slightly perturbed version of the original
+    ao_hat = ao + 0.05*ao*np.exp(2j*np.pi*np.random.random(ao.shape))
+    freqs = np.arange(ao.n_chan)
+
+    return objective(ao, ao_hat, lmbda, freqs)
 
 
 def main():
@@ -130,9 +150,8 @@ def main():
     # Open cal file and load the data
     ao = aocal.fromfile(args.solution_file)
 
-    print(ao.shape)
-
-    test_optimal_rotation(ao)
+    #test_optimal_rotation(ao)
+    print(test_objective(ao, args.lmbda))
 
 
 if __name__ == '__main__':
