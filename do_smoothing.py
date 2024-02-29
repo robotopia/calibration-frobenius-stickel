@@ -30,23 +30,46 @@ def optimal_rotation(ao1, ao2, axis=None):
 
 def ao_min_diff(ao1, ao2, axis=None):
     '''
-    Returns the minimum difference of two (sets of) calibration solutions.
-    "Minimum" up to rotation of the solutions by a unit length phasor:
-    ao1 - e^(iθ) * ao2
+    Returns the minimum difference of two (sets of) calibration solutions,
+    where "minimum" means "minimum up to rotation of the solutions by a unit
+    length phasor":
+
+        ao1 - e^(iθ) * ao2
+
+    "axis" controls which dimensions are summed over when computing the
+    optimum theta value.
     '''
     theta_min = optimal_rotation(ao1, ao2, axis=axis)
-    diff = ao1 - rotate_phases(ao2, theta_rad)
+    diff = ao1 - rotate_phases(ao2, theta_min)
 
     return diff
 
-def ao_min_diff_freq(ao1, idx=None):
+def ao_min_diff2_freq(ao1, freqs=None):
+    '''
+    Returns the second order central finite difference over the frequency axis
+    '''
+    # If no freqs are given, construct one
+    if freqs is None:
+        freqs = np.arange(ao1.n_chan)
 
-    diff1 = ao_min_diff(ao1[:,:,:-1])
-    #UP TO HERE
-    if idx is not None:
-        diff1_idx += idx[:-1] + np.diff(idx)/2
+    # Pad the frequency axis by zeros on either side
+    zero_slice = np.full((ao1.n_int, ao1.n_nant, 1, ao1.n_pol), 0.0 + 0.0j)
+    padded_ao1 = np.concatenate((zero_slice, ao1, zero_slice), axis=2)
 
-    # UP TO HERE
+    # Do something similar with the frequencies
+    df_start = freqs[1] - freqs[0]
+    df_end = freqs[-1] - freqs[-2]
+    padded_freqs = np.concatenate(([freqs[0] - df_start], freqs, [freqs[-1] + df_end]))
+
+    # First order differences
+    diff_12 = ao_min_diff(padded_ao1[:,:,1:-1,:], ao1[:,:,:-2,:], axis=(0, 1, 3)) / (freqs[1:-1] - freqs[:-2])
+    diff_23 = ao_min_diff(padded_ao1[:,:,2:,:], ao1[:,:,1:-1,:], axis=(0, 1, 3)) / (freqs[2:] - freqs[1:-1])
+
+    # Second order difference
+    diff2_123 = (diff_23 - diff_12) / (0.5 * (freqs[2:] - freqs[:-2]))
+
+    return diff2_123
+
 
 def test_optimal_rotation(ao):
 
@@ -74,11 +97,23 @@ def test_optimal_rotation(ao):
     ao = rotate_phases(ao, theta_mins)
     aocal_plot.plot(ao, plot_filename="test", n_rows=6, ants_per_line=6, chan_idxs=chans)
 
-def objective(ao, ao_hat):
+
+def objective(ao, ao_hat, lmbda):
     '''
-    ao is the original data set, where 
+    ao is the original data set
+    ao_hat is the model
+    lmbda is the regularisation parameter
     '''
-    pass
+    # Calculate the residuals
+    R = ao_min_diff(ao, ao_hat, axis=(0, 1, 3)) # "axis" controls how theta_min is calculated
+
+    # The "goodness-of-fit" cost function:
+    C_fit = np.nanmean(np.abs(R)**2)  # Is actually (the square of) the Frobenius norm
+
+    # The smoothness cost function
+    #C_smooth = ao_min_diff2_freq(ao_hat, freqs=None)
+    # UP TO HERE
+
 
 def main():
     # Argument parser
