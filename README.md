@@ -5,7 +5,7 @@ Contents of this `README`:
 - [Regularisation](#regularisation)
 - [Calibration data sets](#calibration-data-sets)
 - [Goodness-of-fit](#goodness-of-fit)
-  - [Finding the optimal $`\theta`$](#finding-the-optimal-theta)
+  - [Finding the optimal θ](#finding-the-optimal-theta)
 - [Smoothness](#smoothness)
 
 ## Folder contents
@@ -82,7 +82,7 @@ C_\text{fit} \equiv \min \left\{C_{\text{fit},\theta} \middle| \theta \in [0,2\p
 
 ### Finding the optimal $`\theta`$
 
-$`\theta`$ is *not* a free parameter to be fitted; the optimal value of $`\theta`$ which minimises the cost functionmust be found at each step of the numerical solution.
+$`\theta`$ is *not* a free parameter to be fitted; the optimal value of $`\theta`$ which minimises the cost function must be found at each step of the numerical solution.
 Fortunately, it can be solved for analytically, as shown below.
 
 First, note that the use of the Frobenius norm to construct the objective function treats each element of the Jones matrices on the same footing.
