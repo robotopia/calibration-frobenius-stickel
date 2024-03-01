@@ -7,6 +7,7 @@ Contents of this `README`:
 - [Goodness-of-fit](#goodness-of-fit)
   - [Finding the optimal θ](#finding-the-optimal-theta)
 - [Smoothness](#smoothness)
+- [Jones matrices with particular forms](#jones-matrices-with-particular-forms)
 
 ## Folder contents
 
@@ -154,14 +155,43 @@ C_\text{smooth} = \sum_{f,i} \lVert {\bf \Delta}_{f,i}^{(2)} \rVert_F^2.
 
 ## Jones matrices with particular forms
 
+> [!WARNING]
+> Under construction!
+
 In some cases, the expected Jones matrices might be expected to have a particular form such as
 ```math
 {\bf G} = \begin{bmatrix} g_{XX} & g_{XX}\sin\alpha \\ -g_{YY} \sin\alpha & g_{YY} \end{bmatrix}.
 ```
 In this example, the Jones matrices only have 5 degrees of freedom (two each for the complex $`g_{XX}`$ and $`g_{YY}`$ terms, and one for $`\alpha`$), instead of the 8 for a completely unconstrained Jones matrix.
 
-In this case, it might be preferable to define two $`C_\text{smooth}`$ objective functions, one for $`g_{XX}`$ and $`g_{YY}`$, and one for $`\alpha`$.
-The former can follow the same scheme as above, by constructing a "norm" ...
+In this case, the goodness-of-fit constraint is still computed the same way as above, but with the pre-step of forming the model Jones matrices, ($`\hat{y}`$) from the model $`g_{XX}`$, $`g_{YY}`$, and $`\alpha`$ terms above.
+
+For the smoothness constraint, however, it might be preferable to define two $`C_\text{smooth}`$ objective functions, one for $`g_{XX}`$ and $`g_{YY}`$, and one for $`\alpha`$, since $`g_{XX}`$ and $`g_{YY}`$ might be expected to evolve more or less slowly over frequency than $`\alpha`$.
+The smoothness constraint for the $`g_{XX}`$ and $`g_{YY}`$ terms can follow a similar scheme as above, i.e. by constructing an objective function based on the second-order finite difference
+```math
+{\bf \Delta}_{f,i}^{(2)} = {\bf \Delta}_{f,i,\theta_{\text{min},f}} - {\bf \Delta}_{f-1,i,\theta_{\text{min},f-1}},
+```
+where now
+```math
+{\bf \Delta}_{f,i,\theta_f} \equiv \begin{bmatrix} \hat{g}_{XX} & 0 \\ 0 & \hat{g}_{YY} \end{bmatrix}_{f,i} - e^{i\theta_f} \begin{bmatrix} \hat{g}_{XX} & 0 \\ 0 & \hat{g}_{YY} \end{bmatrix}_{f-1,i}.
+```
+The corresponding objective function is
+```math
+C_{\text{smooth},g} = \sum_{f,i} \lVert {\bf \Delta}_{f,i}^{(2)} \rVert_F^2,
+```
+
+$`\alpha`$, however, may be expected to change more or less smoothly over frequency than the $`g_{XX}`$ and $`g_{YY}`$ terms.
+As a real quantity, we can define its cost function in the "ordinary" (second-order finite difference) way:
+```math
+C_{\text{smooth},\alpha} = \sum_{f,i} (\alpha_{f-1,i} - 2\alpha_{f,i} + \alpha_{f+1,i})^2
+```
+
+Now the total cost function is made up of three terms:
+```math
+C = C_\text{fit} + \lambda_g C_{\text{smooth},g} + \lambda_\alpha C_{\text{smooth},\alpha}.
+```
+The user can adjust $`\lambda_g`$ and $`\lambda_\alpha`$ independently of each other to control the amount of smoothing desired for their respective model parameters.
 
 > [!WARNING]
 > Under construction!
+
