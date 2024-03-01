@@ -66,3 +66,18 @@ We just solve for $`\tilde{\bf G}_i`$:
 ```math
 \tilde{\bf G}_i = {\bf G}_i {\bf B} {\bf M}^{-1} {\bf B}^{-1}.
 ```
+
+## General solution
+
+Whether $`{\bf E}`$ is polarised or not, we still require that both
+```math
+{\bf E} = {\bf M} {\bf E} {\bf M}^{-1},
+```
+(or in other words, $`{\bf EM} = {\bf ME}`$), as well as
+```math
+{\bf M}^{-1} = {\bf M}^H.
+```
+
+> [!NOTE]
+> Under construction!
+
